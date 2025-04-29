@@ -1,12 +1,83 @@
 UserBalance = 55000
 
+
+def getInputName():
+    name =input("Enter Your Full Name : ").strip().upper()
+
+def getInputNic():
+    nic = input("Enter Your Nic Number : ").strip().lower()
+
+    length = len(nic)
+    while True:
+        
+        if length == 12:
+            return nic
+            break
+        elif length ==10:
+            if nic[-1] == 'v':
+                return nic
+                break
+            else:
+                print("Enter The Correct Nic Number: ")
+                
+        else:
+            print("Enter The Correct Nic Number: ")
+            
+    
+
+def getInputDob():
+    dob = input("Enter Your Your Date Of Birth (YYYY-MM-DD) : ").strip()
+    return dob
+
+
+
 def getInputFromUser():
     amount = float(input("Enter The Amount : "))
 
-    if amount 
+    if amount > 0:
 
 
-# def createAccount():
+def WriteUserDetails():
+    getInputName()
+    getInputNic()
+    getInputDob()
+
+    
+        
+
+    file = open('AccountDetails.txt','a')
+    file.write('\t')
+    file.write()
+
+
+def createAccount():
+    try:
+
+        while True:
+            print ("Which Account Do You Want to Open ")
+            print("1.Current Account ")
+            print("2.Saving Account ")
+            
+            acOption = input("Select Your Account (1-2): ").strip()
+
+            if acOption == '1':
+                print("You Selected Current Account...")
+                print("Can You Enter Your Personal Details...")
+                WriteUserDetails()
+                break
+
+            elif acOption =='2':
+                print("You Selected Savings Account ")
+                print("Can You Enter Your Personal Details...")
+                WriteUserDetails()
+                break
+            else:
+                print("Select The Correct Account...")
+
+    except Nullpoint       
+        
+
+        
 
 def depositMoney():
     global userbalance
