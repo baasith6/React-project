@@ -1,50 +1,57 @@
 UserBalance = 55000
 
-
-def getInputName():
-    name =input("Enter Your Full Name : ").strip().upper()
-
-def getInputNic():
-    nic = input("Enter Your Nic Number : ").strip().lower()
-
+def userDetailsInputValidation(name,nic,dob,email):
+    
     length = len(nic)
-    while True:
-        
-        if length == 12:
+    if len(name) > 0 and name.isalpha():
+        return True
+    else:
+        print("Input is null.")
+
+    if length == 12:
+        return nic
+    elif length ==10:
+        if nic[-1] == 'v':
             return nic
-            break
-        elif length ==10:
-            if nic[-1] == 'v':
-                return nic
-                break
-            else:
-                print("Enter The Correct Nic Number: ")
-                
         else:
             print("Enter The Correct Nic Number: ")
             
-    
+    else:
+        print("Enter The Correct Nic Number: ")
+    try:
+        # Define the expected date format
+        dob = datetime.strptime(dob_str, "%Y-%m-%d")
+        
+        # Check if the date is in the past
+        if dob >= datetime.now():
+            return False, "Date of birth cannot be in the future."
+        
+        return True, "Valid date of birth."
+    except ValueError:
+        return False, "Invalid date format. Please use YYYY-MM-DD."
 
-def getInputDob():
-    dob = input("Enter Your Your Date Of Birth (YYYY-MM-DD) : ").strip()
-    return dob
+def getInputUserDetails():
+    while True:
+        name =input("Enter Your Full Name : ").strip().upper()
+        nic = input("Enter Your Nic Number : ").strip().lower()
+        dob = input("Enter Your Your Date Of Birth (YYYY-MM-DD) : ").strip()
+        email = input("Enter Your Email :  ")
+
+        if userDetailsInputValidation(name,nic,dob,email):
+            return (name,nic,dob,email)
 
 
 
-def getInputFromUser():
-    amount = float(input("Enter The Amount : "))
+# def getInputFromUser():
+#     amount = float(input("Enter The Amount : "))
 
-    if amount > 0:
+#     if amount > 0:
 
 
 def WriteUserDetails():
     getInputName()
     getInputNic()
     getInputDob()
-
-    
-        
-
     file = open('AccountDetails.txt','a')
     file.write('\t')
     file.write()
@@ -74,7 +81,8 @@ def createAccount():
             else:
                 print("Select The Correct Account...")
 
-    except Nullpoint       
+    except ValueError :
+        print ("Enter the Correct Value ...")       
         
 
         
@@ -83,8 +91,7 @@ def depositMoney():
     global userbalance
     try:
         withAmount = int(input("Enter The Withdraw Amount : "))
-        if withAmount <= userbalance:
-            with 
+        if withAmount <= userbalance: 
             userbalance -= withAmount
             print("The withdrawal is Successful")
         else:
@@ -100,30 +107,30 @@ def depositMoney():
 
 # def transactionHistory():
 
-def main():
 
-    attempt =0
-    while attempt < 3:
-        print("\t\t========== Welcom to Unicom Tic Bank ==========")
 
-        userInput = input("1.Do You Have An Account (y/n):").lower().strip()
+def adminMenu():
+    print("========= Welcome To Admin Dashboard ===============")
+    print("1. Create Account ")
+    print("2.Account Details ")
+    print("3.Exit")
 
-        if userInput == "y" or userInput == "yes":
-            login()
-        elif userInput == "n" or userInput == "no":
+    choice = input("Select Your Activity(1-6): ").strip()
+
+    while True:
+        if choice =='1':
             createAccount()
+        elif choice =='2':
+            totalAcDetails()
+        elif choice=='3':
+            exit()
         else:
-            print("Enter The Correct Input...",f"Remaining Chance Is {2-attempt}")
-            attempt +=1
+            print("Enter the correct Activity...")
 
-    if attempt == 3 :
-        print("User Chance Are Finished ...")   
-
-
-def menu():
+def userMenu():
     while True:
         print("====== Welcom To Unicom Tic Bank Menu ========")
-        print("1. Create Account ",)
+        print("1.Account Details ")
         print("2.Deposit Money ")
         print("3.Withdraw Money ")
         print("4.Check Balance ")
@@ -133,7 +140,7 @@ def menu():
         choice = input("Select Your Activity(1-6): ").strip()
 
         if choice =='1':
-            createAccount()
+            userAcDetails()
         elif choice =='2':
             depositMoney()
         elif choice=='3':
@@ -147,27 +154,38 @@ def menu():
         else:
             print("Enter the correct Activity...")
 
-def login():
-    userName = "user"
-    userPassword = "1234"
 
-    userNameInput = input("Enter Your UserName : ").strip()
-    userPasswordInput = input("Enter The Password : ").strip()
 
-    attempt = 0
-    while attempt <3:
-        if userName == userNameInput and userPassword==userPasswordInput:
-            menu()
-        else:
-            print("Enter The Correct User Name ,Password ...",f"Remaining Chance Is {2-attempt}")
-            attempt +=1
+def read_credentials():
+    file_path ='credentials.txt'
+    credentials = {}
+    with open(file_path, 'r') as file:
+        for line in file:
+            username, password, role = line.strip().split(':')
+            credentials[username] = {'password': password, 'role': role}
+    return credentials
 
-    if attempt == 3 :
-        print("User Your Login Chance is Finished")
-        main()
+
+def login(credentials):
+    username = input("Enter username: ")
+    password = input("Enter password: ")
+
+    if username in credentials and credentials[username]['password'] == password:
+        role = credentials[username]['role']
+        print(f"Login successful! Welcome, {role}.")
+        if role == 'admin':
+            adminMenu()
+        elif role == 'user':
+            userMenu()
+    else:
+        print("Invalid username or password.")
+        return None
       
 
 
+def main():
+    credentials = read_credentials()
+    role = login(credentials)
 
 
 main()
