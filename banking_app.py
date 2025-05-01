@@ -1,6 +1,16 @@
-UserBalance = 55000
+import getpass
+import datetime 
 
-def userDetailsInputValidation(name,nic,dob,email):
+def userbalance():
+    userbalance = 55000
+    with open('balance.txt', 'w+') as file:
+    file.write(userbalance)
+    balance = []
+    balance = file.readlines(u)
+    
+
+
+def userDetailsInputValidation(name,nic,dob,email,userName,password):
     
     length = len(nic)
     if len(name) > 0 and name.isalpha():
@@ -36,9 +46,11 @@ def getInputUserDetails():
         nic = input("Enter Your Nic Number : ").strip().lower()
         dob = input("Enter Your Your Date Of Birth (YYYY-MM-DD) : ").strip()
         email = input("Enter Your Email :  ")
+        userName =input("Enter Account Your Name : ")
+        password = input("Enter Account Password : ")
 
-        if userDetailsInputValidation(name,nic,dob,email):
-            return (name,nic,dob,email)
+        if userDetailsInputValidation(name,nic,dob,email,userName,password):
+            return name,nic,dob,email,userName,password
 
 
 
@@ -70,13 +82,13 @@ def createAccount():
             if acOption == '1':
                 print("You Selected Current Account...")
                 print("Can You Enter Your Personal Details...")
-                WriteUserDetails()
+                getInputUserDetails()
                 break
 
             elif acOption =='2':
                 print("You Selected Savings Account ")
                 print("Can You Enter Your Personal Details...")
-                WriteUserDetails()
+                getInputUserDetails()
                 break
             else:
                 print("Select The Correct Account...")
@@ -88,7 +100,8 @@ def createAccount():
         
 
 def depositMoney():
-    global userbalance
+    # with open('balance.txt', 'r') as file:
+    # userbalance = file.read()
     try:
         withAmount = int(input("Enter The Withdraw Amount : "))
         if withAmount <= userbalance: 
@@ -100,8 +113,9 @@ def depositMoney():
     except ValueError:
         print("Please Enter a Valid Number...")
     print("==========================")
+def withdrawMoney():
 
-# def withdrawMoney():
+
 
 # def checkBalance():
 
@@ -168,7 +182,7 @@ def read_credentials():
 
 def login(credentials):
     username = input("Enter username: ")
-    password = input("Enter password: ")
+    password = getpass.getpass("Enter your password: ")
 
     if username in credentials and credentials[username]['password'] == password:
         role = credentials[username]['role']
