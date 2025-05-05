@@ -6,8 +6,9 @@
 # maximum = pow(10, 10) - 1
 # print(random.randint(minimum, maximum)) 
 
-def get_input():
-    user_input = input("Enter something: ")
-    return user_input
+import bcrypt
 
-get_input()
+raw_password = "admin"
+hashed = bcrypt.hashpw(raw_password.encode(), bcrypt.gensalt()).decode()
+
+print("Hashed Password:", hashed)
