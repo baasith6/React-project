@@ -1,7 +1,6 @@
-1001|Account opened with Rs.4500000.0
-1002|Account opened with Rs.340000.0
-1001|Interest of Rs.11250.0 applied on 2025-05-05
-1003|Account opened with Rs.23000.0
-1003|Monthly Interest Rs.57.5 on 2025-05-05
-1004|Account opened with Rs.120000.0
-1004|Monthly Interest Rs.300.0 on 2025-05-05
+2004|Account opened with Rs.230000.0
+2004|Deposited Rs.20300000.0 on 2025-05-08 06:35:16.853786
+2004|Withdrew Rs.10000.0 on 2025-05-08 06:35:31.598577
+2004|Monthly Interest Rs.575.0 on 2025-05-08
+2005|Account opened with Rs.230000.0
+2005|Monthly Interest Rs.575.0 on 2025-05-08
