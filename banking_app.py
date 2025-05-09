@@ -1,7 +1,7 @@
 """
 UNICOM TIC Banking System 
 ----------------------------------------------
-Author: Abdul Baasith
+Developed By: Abdul Baasith
 
 This program is a basic terminal-based banking system built using Python.
 It supports user and admin login, account creation, balance check,
@@ -235,7 +235,12 @@ def login(credentials):
     print(Fore.GREEN+"\t|                                                                                  |")
     print(Fore.GREEN+"\t___________________________________________________________________________________")
     print("")
-    print(Fore.CYAN + "\n\t\t\t\t=============== Login ===============")
+    print(Fore.CYAN+"\t___________________________________________________________________________________")
+    print(Fore.CYAN+"\t|                                                                                  |")
+    print(Fore.CYAN+"\t|                 ==================== LOGIN ====================                  |")
+    print(Fore.CYAN+"\t|                                                                                  |")
+    print(Fore.CYAN+"\t|___________________________________________________________________________________")
+    print("")
     username = input("\t\t\t\tUsername: ").strip()
     password = pwinput.pwinput("\t\t\t\tPassword: ").strip()
 
@@ -294,7 +299,7 @@ def getDobFromNic(nic):
         if day_of_year > 500:
             day_of_year -= 500
         if day_of_year > 0:
-            day_of_year -= 1
+            day_of_year -= 2
 
         is_leap = year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
         month_days = [31, 29 if is_leap else 28, 31, 30, 31, 30,
@@ -461,11 +466,16 @@ and generates credentials.
 '''
 def createAccount(accounts):
     clearScreen()
-    print(Fore.CYAN + "\n--- Create New Bank Account ---")
+    print(Fore.CYAN+"\t___________________________________________________________________________________")
+    print(Fore.CYAN+"\t|                                                                                  |")
+    print(Fore.CYAN+"\t|          ================= Create New Bank Account ==================            |")
+    print(Fore.CYAN+"\t|                                                                                  |")
+    print(Fore.CYAN+"\t___________________________________________________________________________________")
+    print("")
 
     try:
-        name = getValidatedInput("Full Name: ", "Name").upper()
-        nic = getValidatedInput("NIC/Passport No: ", "NIC/Passport Number", "nic")
+        name = getValidatedInput("\t\t\t\tFull Name: ", "Name").upper()
+        nic = getValidatedInput("\t\t\t\tNIC/Passport No: ", "NIC/Passport Number", "nic")
 
         dob, gender = getDobFromNic(nic)
 
@@ -473,11 +483,11 @@ def createAccount(accounts):
             print(Fore.RED + "⚠️ Unable to extract DOB from NIC. Please check the format.")
             return
 
-        print(Fore.CYAN + f"✔️ Extracted DOB from NIC: {dob} ({gender})")
+        print(Fore.CYAN + f"\t\t\t\t✔️ Extracted DOB from NIC: {dob} ({gender})")
 
-        phone = getValidatedInput("Phone Number: ", "Phone Number", "phone")
-        email = getValidatedInput("Email Address: ", "Email", "email")
-        address = getValidatedInput("Residential Address: ", "Residential Address")
+        phone = getValidatedInput("\t\t\t\tPhone Number: ", "Phone Number", "phone")
+        email = getValidatedInput("\t\t\t\tEmail Address: ", "Email", "email")
+        address = getValidatedInput("\t\t\t\tResidential Address: ", "Residential Address")
         accountType = AccountType()
 
         while True:
@@ -796,7 +806,7 @@ def softDeleteCustomer(accNo=None):
     confirmed = input("Are you sure you want to mark this customer as inactive? (Y/N): ").strip()
     confirmed = confirmed.lower()
 
-    if confirmed != "y":
+    if confirmed != "y" or confirmed != "yes" :
         print(Fore.RED + "❌ Deletion cancelled.")
         return
 
@@ -1356,7 +1366,12 @@ operations like deposits, transfers, etc.
 def userMenu(accounts, role, acc_no):
     while True:
         clearScreen()
-        print(Fore.CYAN + "\n=== User Menu ===")
+        print(Fore.CYAN+"\t___________________________________________________________________________________")
+        print(Fore.CYAN+"\t|                                                                                  |")
+        print(Fore.CYAN+"\t|                 ================= User  Menu ==================                  |")
+        print(Fore.CYAN+"\t|                                                                                  |")
+        print(Fore.CYAN+"\t___________________________________________________________________________________")
+        print("")
         menu = [
             ["1", "User Profile"],
             ["2", "Deposit"],
@@ -1366,10 +1381,13 @@ def userMenu(accounts, role, acc_no):
             ["6", "Transfer Money"],
             ["0", "Logout"]
         ]
-        print(tabulate(menu, headers=["Option", "Description"], tablefmt="fancy_grid"))
+        table = tabulate(menu, headers=["Option", "Description"], tablefmt="fancy_grid")
+
+        for i in table.split("\n"):
+            print("\t\t\t\t"+i)
 
         try:
-            choice = input(Fore.YELLOW + "Select an option (0–6): ").strip()
+            choice = input(Fore.YELLOW + "\t\t\t\tSelect an option (0–6): ").strip()
         except Exception as e:
             print(Fore.RED + f"❌ Input error: {e}")
             input(Fore.YELLOW + "\nPress Enter to continue...")
@@ -1425,7 +1443,12 @@ def startMenu():
             choice = input(Fore.CYAN + "Press ENTER to login again or type 0 to exit: ").strip()
 
             if choice == '0':
-                print(Fore.CYAN + "Thank you for using Mini Banking App. Goodbye!")
+                print(Fore.CYAN+"\t___________________________________________________________________________________")
+                print(Fore.CYAN+"\t|                                                                                  |")
+                print(Fore.CYAN+"\t|  ============ Thank you for using Unicom Banking App. Goodbye!  ============     |")
+                print(Fore.CYAN+"\t|                                                                                  |")
+                print(Fore.CYAN+"\t___________________________________________________________________________________")
+                print("")
                 break
 
         except KeyboardInterrupt:
