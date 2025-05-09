@@ -24,7 +24,7 @@ Python Modules
 - datetime  - Handles date and time (used for DOB, transactions, interest dates)
 - os        - Allows clearing the terminal screen based on OS
 - re        - Used for pattern matching (e.g., validating NIC, email, phone)
-- tabulate  - Prints data in neat table format (e.g., customer profile, transactions)
+- tabulate  - Prints data in neat table format ( customer profile, transactions)
 - colorama  - Adds color to terminal text to highlight errors, success, etc.
 
 """

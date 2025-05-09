@@ -13,3 +13,4 @@
 2009|Account opened with Rs.234000.0
 2009|Monthly Interest Rs.585.0 on 2025-05-09
 2010|Account opened with Rs.2300000.0
+2010|Monthly Interest Rs.5750.0 on 2025-05-09
