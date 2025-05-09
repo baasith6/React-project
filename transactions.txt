@@ -4,3 +4,5 @@
 2004|Monthly Interest Rs.575.0 on 2025-05-08
 2005|Account opened with Rs.230000.0
 2005|Monthly Interest Rs.575.0 on 2025-05-08
+2006|Account opened with Rs.320000.0
+2006|Monthly Interest Rs.800.0 on 2025-05-09
