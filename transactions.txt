@@ -1,16 +1,4 @@
-2004|Account opened with Rs.230000.0
-2004|Deposited Rs.20300000.0 on 2025-05-08 06:35:16.853786
-2004|Withdrew Rs.10000.0 on 2025-05-08 06:35:31.598577
-2004|Monthly Interest Rs.575.0 on 2025-05-08
-2005|Account opened with Rs.230000.0
-2005|Monthly Interest Rs.575.0 on 2025-05-08
-2006|Account opened with Rs.320000.0
-2006|Monthly Interest Rs.800.0 on 2025-05-09
-2007|Account opened with Rs.560000.0
-2007|Monthly Interest Rs.1400.0 on 2025-05-09
-2008|Account opened with Rs.230000.0
-2008|Monthly Interest Rs.575.0 on 2025-05-09
-2009|Account opened with Rs.234000.0
-2009|Monthly Interest Rs.585.0 on 2025-05-09
-2010|Account opened with Rs.2300000.0
-2010|Monthly Interest Rs.5750.0 on 2025-05-09
+2004|Opening Balance|120000.0|2025-05-11 04:28:23
+2005|Opening Balance|456000.0|2025-05-11 04:29:15
+2004|Transfer to 2005|1000.0|2025-05-11 04:29:49
+2005|Transfer from 2004|1000.0|2025-05-11 04:29:49

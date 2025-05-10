@@ -190,16 +190,25 @@ def writeAccountDetails(accNo, name, balance):
         print(f"❌ Error writing account details for {accNo}: {e}")
 
 
+def writeAccountDetailsUpdated(accounts):
+    try:
+        with open("AccountDetails.txt", 'w') as f:
+            for accNo, data in accounts.items():
+                f.write(f"{accNo}|{data['name']}|{data['balance']}\n")
+    except Exception as e:
+        print(Fore.RED + f"❌ Error updating AccountDetails.txt: {e}")
 
 '''
 Saves each transaction message with the account number to maintain a permanent audit trail.
 '''
-def writeTransaction(accNo, txn):
+def writeTransaction(accNo, txnType, amount):
     try:
+        now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         with open("transactions.txt", 'a') as f:
-            f.write(accNo + '|' + txn + '\n')
+            f.write(f"{accNo}|{txnType}|{amount}|{now}\n")
     except Exception as e:
         print(Fore.RED + f"❌ Failed to write transaction: {e}")
+
 
 
 
@@ -299,7 +308,7 @@ def getDobFromNic(nic):
         if day_of_year > 500:
             day_of_year -= 500
         if day_of_year > 0:
-            day_of_year -= 2
+            day_of_year -= 1
 
         is_leap = year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
         month_days = [31, 29 if is_leap else 28, 31, 30, 31, 30,
@@ -529,11 +538,12 @@ def createAccount(accounts):
             accounts[accNo] = {
                 'name': name,
                 'balance': balance,
-                'transactions': [f"Account opened with Rs.{balance}"]
+                'transactions': [f"Opening Balance|{balance}|{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"]
             }
 
             writeAccountDetails(accNo, name, balance)
-            writeTransaction(accNo, f"Account opened with Rs.{balance}")
+            writeTransaction(accNo, "Opening Balance", balance)
+
 
             with open('CustomerProfiles.txt', 'a') as f:
                 f.write(f"{accNo}|{name}|{nic}|{dob}|{phone}|{email}|{address}|{gender}|{accountType}|Active\n")
@@ -876,21 +886,15 @@ updates in-memory balance, and logs transaction.
 def deposit(accounts, role, acc_no=None):
     entered = input(Fore.CYAN + "Enter account number: ").strip()
 
-    if role != "admin":
-        if entered != acc_no:
-            print(Fore.RED + "❌ You can only deposit into your own account.")
-            return
+    if role != "admin" and entered != acc_no:
+        print(Fore.RED + "❌ You can only deposit into your own account.")
+        return
 
-    if accountInactive(entered) == True:
+    if accountInactive(entered):
         print(Fore.RED + "❌ Cannot deposit to an inactive account.")
         return
 
-    found = False
-    for key in accounts:
-        if key == entered:
-            found = True
-
-    if found == False:
+    if entered not in accounts:
         print(Fore.RED + "❌ Account not found.")
         return
 
@@ -907,18 +911,18 @@ def deposit(accounts, role, acc_no=None):
         return
 
     try:
-        accounts[entered]["balance"] = accounts[entered]["balance"] + amount
+        accounts[entered]["balance"] += amount
 
-        now = datetime.datetime.now()
-        txn = "Deposited Rs." + str(amount) + " on " + str(now)
+        now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        txn = f"Deposit|{amount}|{now}"
 
         accounts[entered]["transactions"].append(txn)
-        writeTransaction(entered, txn)
+        writeTransaction(entered, "Deposit", amount)
 
-        print(Fore.GREEN + "✅ Rs." + str(amount) + " successfully deposited into account " + entered + ".")
+        print(Fore.GREEN + f"✅ Rs.{amount} successfully deposited into account {entered}.")
 
     except Exception as e:
-        print(Fore.RED + "❌ Failed to process deposit: " + str(e))
+        print(Fore.RED + f"❌ Failed to process deposit: {e}")
 
 
 
@@ -929,21 +933,15 @@ then deducts amount and logs the transaction.
 def withdraw(accounts, role, acc_no=None):
     entered = input(Fore.CYAN + "Enter account number: ").strip()
 
-    if role != "admin":
-        if entered != acc_no:
-            print(Fore.RED + "❌ You can only withdraw from your own account.")
-            return
+    if role != "admin" and entered != acc_no:
+        print(Fore.RED + "❌ You can only withdraw from your own account.")
+        return
 
-    if accountInactive(entered) == True:
+    if accountInactive(entered):
         print(Fore.RED + "❌ Cannot withdraw from an inactive account.")
         return
 
-    found = False
-    for key in accounts:
-        if key == entered:
-            found = True
-
-    if found == False:
+    if entered not in accounts:
         print(Fore.RED + "❌ Account not found.")
         return
 
@@ -966,18 +964,19 @@ def withdraw(accounts, role, acc_no=None):
         return
 
     try:
-        accounts[entered]["balance"] = current_balance - amount
+        accounts[entered]["balance"] -= amount
 
-        now = datetime.datetime.now()
-        txn = "Withdrew Rs." + str(amount) + " on " + str(now)
+        now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        txn = f"Withdraw|{amount}|{now}"
 
         accounts[entered]["transactions"].append(txn)
-        writeTransaction(entered, txn)
+        writeTransaction(entered, "Withdraw", amount)
 
-        print(Fore.GREEN + "✅ Rs." + str(amount) + " withdrawn successfully from account " + entered + ".")
+        print(Fore.GREEN + f"✅ Rs.{amount} withdrawn successfully from account {entered}.")
 
     except Exception as e:
-        print(Fore.RED + "❌ Withdrawal failed due to an error: " + str(e))
+        print(Fore.RED + f"❌ Withdrawal failed due to an error: {e}")
+
 
 
 '''
@@ -1021,42 +1020,41 @@ def viewTransactions(accounts, role, acc_no=None):
     try:
         entered = input(Fore.CYAN + "Enter account number: ").strip()
 
-        if role != "admin":
-            if entered != acc_no:
-                print(Fore.RED + "❌ You can only view your own transactions.")
-                return
+        if role != "admin" and entered != acc_no:
+            print(Fore.RED + "❌ You can only view your own transactions.")
+            return
 
-        if accountInactive(entered) == True:
+        if accountInactive(entered):
             print(Fore.RED + "❌ Cannot view transactions for an inactive account.")
             return
 
-        found = False
-        for key in accounts:
-            if key == entered:
-                found = True
-
-        if found == False:
+        if entered not in accounts:
             print(Fore.RED + "❌ Account not found.")
             return
 
-        transactions = accounts[entered]["transactions"]
-        print(Fore.CYAN + "\n📄 Transaction History for Account " + entered + ":\n")
+        transaction_table = []
+        index = 1
 
-        if len(transactions) == 0:
+        with open("transactions.txt", 'r') as f:
+            for line in f:
+                parts = line.strip().split('|')
+                if len(parts) == 4 and parts[0] == entered:
+                    accNo, txnType, amount, date = parts
+                    transaction_table.append([index, txnType, f"Rs.{amount}", date])
+                    index += 1
+
+        print(Fore.CYAN + f"\n📄 Transaction History for Account {entered}:\n")
+
+        if not transaction_table:
             print(Fore.YELLOW + "⚠️ No transactions recorded for this account.")
             return
 
-        table = []
-        index = 1
-        for txn in transactions:
-            row = [index, txn]
-            table.append(row)
-            index = index + 1
+        print(tabulate(transaction_table, headers=["No", "Type", "Amount", "Date"], tablefmt="fancy_grid"))
 
-        print(tabulate(table, headers=["No", "Transaction Details"], tablefmt="fancy_grid"))
-
+    except FileNotFoundError:
+        print(Fore.YELLOW + "⚠️ No transactions file found.")
     except Exception as e:
-        print(Fore.RED + "❌ Error retrieving transactions: " + str(e))
+        print(Fore.RED + f"❌ Error retrieving transactions: {e}")
 
 
 '''
@@ -1067,35 +1065,25 @@ def transferMoney(accounts, role, acc_no=None):
     try:
         fromAcc = input(Fore.CYAN + "Sender Account Number: ").strip()
 
-        if role == "user":
-            if fromAcc != acc_no:
-                print(Fore.RED + "⚠️ You can only transfer from your own account.")
-                return
+        if role == "user" and fromAcc != acc_no:
+            print(Fore.RED + "⚠️ You can only transfer from your own account.")
+            return
 
-        if accountInactive(fromAcc) == True:
+        if accountInactive(fromAcc):
             print(Fore.RED + "❌ Sender account is inactive.")
             return
 
         toAcc = input(Fore.CYAN + "Receiver Account Number: ").strip()
 
-        if accountInactive(toAcc) == True:
+        if accountInactive(toAcc):
             print(Fore.RED + "❌ Receiver account is inactive.")
             return
 
-        sender_found = False
-        receiver_found = False
-
-        for key in accounts:
-            if key == fromAcc:
-                sender_found = True
-            if key == toAcc:
-                receiver_found = True
-
-        if sender_found == False:
+        if fromAcc not in accounts:
             print(Fore.RED + "❌ Sender account not found.")
             return
 
-        if receiver_found == False:
+        if toAcc not in accounts:
             print(Fore.RED + "❌ Receiver account not found.")
             return
 
@@ -1111,28 +1099,26 @@ def transferMoney(accounts, role, acc_no=None):
             return
 
         # Perform transfer
-        old_balance_sender = accounts[fromAcc]["balance"]
-        old_balance_receiver = accounts[toAcc]["balance"]
+        accounts[fromAcc]["balance"] -= amount
+        accounts[toAcc]["balance"] += amount
 
-        accounts[fromAcc]["balance"] = old_balance_sender - amount
-        accounts[toAcc]["balance"] = old_balance_receiver + amount
+        now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        txn_sender = f"Transfer to {toAcc}|{amount}|{now}"
+        txn_receiver = f"Transfer from {fromAcc}|{amount}|{now}"
 
-        now = datetime.datetime.now()
-        t1 = "Transferred Rs." + str(amount) + " to " + toAcc + " on " + str(now)
-        t2 = "Received Rs." + str(amount) + " from " + fromAcc + " on " + str(now)
+        accounts[fromAcc]["transactions"].append(txn_sender)
+        accounts[toAcc]["transactions"].append(txn_receiver)
 
-        accounts[fromAcc]["transactions"].append(t1)
-        accounts[toAcc]["transactions"].append(t2)
-
-        writeTransaction(fromAcc, t1)
-        writeTransaction(toAcc, t2)
-
+        writeTransaction(fromAcc, f"Transfer to {toAcc}", amount)
+        writeTransaction(toAcc, f"Transfer from {fromAcc}", amount)
+        writeAccountDetailsUpdated(accounts)
         print(Fore.GREEN + "✅ Transfer completed successfully.")
 
     except ValueError:
         print(Fore.RED + "❌ Please enter a valid numeric amount.")
     except Exception as e:
-        print(Fore.RED + "❌ An error occurred: " + str(e))
+        print(Fore.RED + f"❌ An error occurred: {e}")
+
 
 
 '''
@@ -1209,10 +1195,11 @@ def applyMonthlyInterest(accounts):
 
                         accounts[accNo]["balance"] = balance + interestAmount
 
-                        txn = "Monthly Interest Rs." + str(interestAmount) + " on " + str(today)
+                        now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                        txn = f"Interest|{interestAmount}|{now}"
                         accounts[accNo]["transactions"].append(txn)
 
-                        writeTransaction(accNo, txn)
+                        writeTransaction(accNo, "Interest", interestAmount)
                         writeAccountDetails(accNo, name, accounts[accNo]["balance"])
 
                         log.write(accNo + "|" + str(today) + "|" + str(interestAmount) + "|" + str(round(interestRateMonthly * 100, 2)) + "%" + "\n")
